@@ -1,0 +1,251 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+
+
+<div class="h-center">
+    <h1 class="h1">{{ title }}</h1>
+</div>
+<div class="creating-recipe">
+    <form id="form-container" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ next }}"/>
+        {% if form.non_field_errors %}
+        <div class="form-fields-errors">
+            {{ form.non_field_errors }}
+        </div>
+        {% endif %}
+
+
+        <label for="{{ form.title.id_for_label }}">{{ form.title.label }}</label>
+        {% if form.title.field.required %}
+            <span style="color: red; user-select: none;" title="Обязательно для заполнения">*</span>
+        {% endif %}
+        <p>{{ form.title }}</p>
+        <div>{{ form.title.errors }}</div>
+
+        <label for="{{ form.description.id_for_label }}">{{ form.description.label }}</label>
+        {% if form.description.field.required %}
+            <span style="color: red; user-select: none;" title="Обязательно для заполнения">*</span>
+        {% endif %}
+        <p>{{ form.description }}</p>
+        <div>{{ form.description.errors }}</div>
+
+        <label for="{{ form.category.id_for_label }}">{{ form.category.label }}</label>
+        {% if form.category.field.required %}
+            <span style="color: red; user-select: none;" title="Обязательно для заполнения">*</span>
+        {% endif %}
+        <p class="form-category">{{ form.category }}</p>
+        <div>{{ form.category.errors }}</div>
+
+        <p class="form-tags"><label for="{{ form.cooking_method.id_for_label }}">{{ form.cooking_method.label }}</label>{{ form.cooking_method }}</p>
+        <div>{{ form.cooking_method.errors }}</div>
+        <script type="text/javascript">
+            $(document).ready(function() {
+                $('.select2-multiple').select2({
+                    placeholder: 'Способы приготовления',
+                    allowClear: true,
+                    width: '100%'
+                });
+            });
+        </script>
+
+        <p class="form-tags"><label for="{{ form.tags.id_for_label }}">{{ form.tags.label }}</label>{{ form.tags }}</p>
+        <div>{{ form.tags.errors }}</div>
+        <script type="text/javascript">
+            $(document).ready(function() {
+                $('.select2-multiple').select2({
+                    placeholder: 'Выберите теги',
+                    allowClear: true,
+                    width: '100%'
+                });
+            });
+        </script>
+
+        <label for="{{ form.is_published.id_for_label }}">{{ form.is_published.label }}</label>
+        <p class="form-status">{{ form.is_published }}</p>
+        <div>{{ form.is_published.errors }}</div>
+
+        <label for="{{ form.portions.id_for_label }}">{{ form.portions.label }}</label>
+        {% if form.portions.field.required %}
+            <span style="color: red; user-select: none;" title="Обязательно для заполнения">*</span>
+        {% endif %}
+        <p class="form-portions">{{ form.portions }}</p>
+        <div>{{ form.portions.errors }}</div>
+
+        <label for="{{ form.cooking_time.id_for_label }}">{{ form.cooking_time.label }}</label>
+        {% if form.cooking_time.field.required %}
+            <span style="color: red; user-select: none;" title="Обязательно для заполнения">*</span>
+        {% endif %}
+        <div class="form-cooking-time-container">
+            <p class="form-cooking-time">{{ form.cooking_time }}</p>
+            <p class="">минут</p>
+        </div>
+        <div>{{ form.cooking_time.errors }}</div>
+
+        <h3>Ингредиенты</h3>
+          <div id="ingredients">
+            {{ ingredient_form.management_form }}
+
+            {% if ingredient_form.non_field_errors %}
+             <div class="form-fields-errors">
+               {{ ingredient_form.non_field_errors }}
+             </div>
+            {% endif %}
+
+            {% for form in ingredient_form %}
+              <div class="ingredient-form">
+                  <div class="ingredient-form-fields">
+                    {{ form.id }}
+                    <div class="ingredient-form-fields-name-ingredient"><label for="{{ form.name_ingredient.id_for_label }}"><b><span class="ingredient-number">1. </span></b>{{ form.name_ingredient.label }}</label>{{ form.name_ingredient }}</div>
+                    <div class="ingredient-form-fields-amount"><label for="{{ form.amount.id_for_label }}">{{ form.amount.label }}</label>{{ form.amount }}</div>
+                    <div class="ingredient-form-fields-unit"><label for="{{ form.unit.id_for_label }}">{{ form.unit.label }}</label>{{ form.unit }}</div>
+                    <div class="hidden">{{ form.DELETE }}</div>
+                    <button type="button" class="remove-ingredient btn-red-sm">Удалить</button>
+                  </div>
+              </div>
+            {% endfor %}
+              <div id="empty-form" class="hidden">
+                  <div class="ingredient-form-fields">
+                      {{ ingredient_form.empty_form.id }}
+                      <div class="ingredient-form-fields-name-ingredient"><label for="{{ ingredient_form.empty_form.name_ingredient.id_for_label }}"><b><span class="ingredient-number">1. </span></b>{{ ingredient_form.empty_form.name_ingredient.label }}</label>{{ ingredient_form.empty_form.name_ingredient }}</div>
+                      <div class="ingredient-form-fields-amount"><label for="{{ ingredient_form.empty_form.amount.id_for_label }}">{{ ingredient_form.empty_form.amount.label }}</label>{{ ingredient_form.empty_form.amount }}</div>
+                      <div class="ingredient-form-fields-unit"><label for="{{ ingredient_form.empty_form.unit.id_for_label }}">{{ ingredient_form.empty_form.unit.label }}</label>{{ ingredient_form.empty_form.unit }}</div>
+                      <div class="hidden">{{ ingredient_form.empty_form.DELETE }}</div>
+                      <button type="button" class="remove-ingredient btn-red-sm">Удалить</button>
+                  </div>
+              </div>
+          </div>
+
+          <button id="add-ingredient" class="btn-blue-sm"><i class="fa-solid fa-plus"></i> Добавить ингредиент</button>
+
+
+          <h3>Шари приготовление</h3>
+            <div id="cooking-step">
+                {{ cooking_step_form.management_form }}
+
+                {% if cooking_step_form.non_field_errors %}
+                 <div class="form-fields-errors">
+                   {{ cooking_step_form.non_field_errors }}
+                 </div>
+                {% endif %}
+
+                {% for form in cooking_step_form %}
+                    <div class="cooking-step-form">
+                        {{ form.id }}
+                        <div class="cooking-step-form-fields">
+                            <div class="cooking-step-form-fields-description-step"><label for="{{ form.description_step.id_for_label }}"><b><span class="step-number">1. </span></b>{{ form.description_step.label }}</label>{{ form.description_step }}</div>
+                            <div class="cooking-step-form-fields-image_step">
+                                <div>
+                                    <label for="{{ form.image_step.id_for_label }}">
+                                        {{ form.image_step.label }}
+                                    </label>
+                                    <span class="icon-container">
+                                        <i class="ion ion-md-information-circle"></i>
+                                        <span class="tooltip-text">
+                                            <p>Фото должно быть в горизонтальном формате</p>
+                                            <i class="ion ion-md-images"></i>
+                                        </span>
+                                    </span>
+                                    <div class="form-fields-file">
+                                        {{ form.image_step }}
+                                        <label for="{{ form.image_step.id_for_label }}" class="custom-file-label">Выберите фото</label>
+
+                                        <div class="image-preview grid">
+                                            <img src="" alt="Image Preview" class="img-thumbnail" style="display: none; width: 100px; height: auto;">
+                                        </div>
+                                        <button type="button" class="btn-clear btn-red-sm" style="display: none;">Очистить</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex">
+                                <div class="hidden">{{ form.DELETE }}</div>
+                                <button type="button" class="self-center remove-cooking-step btn-red-sm">Удалить</button>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+
+                <div id="empty-form-cooking-step" class="hidden">
+                    {{ cooking_step_form.empty_form.id }}
+                    <div class="cooking-step-form-fields">
+                        <div class="cooking-step-form-fields-description-step"><label for="{{ cooking_step_form.empty_form.description_step.id_for_label }}"><b><span class="step-number">1. </span></b>{{ cooking_step_form.empty_form.description_step.label }}</label>{{ cooking_step_form.empty_form.description_step }}</div>
+                        <div class="cooking-step-form-fields-image_step">
+                            <div>
+                                <label for="{{ cooking_step_form.empty_form.image_step.id_for_label }}">
+                                    {{ cooking_step_form.empty_form.image_step.label }}
+                                </label>
+                                <span class="icon-container">
+                                    <i class="ion ion-md-information-circle"></i>
+                                    <span class="tooltip-text">
+                                        <p>Фото должно быть в горизонтальном формате</p>
+                                        <i class="ion ion-md-images"></i>
+                                    </span>
+                                </span>
+                                <div class="form-fields-file">
+                                    {{ cooking_step_form.empty_form.image_step }}
+                                    <label for="{{ cooking_step_form.empty_form.image_step.id_for_label }}" class="custom-file-label">Выберите фото</label>
+                                    <div class="image-preview grid">
+                                        <img src="" alt="Image Preview" class="img-thumbnail" style="display: none; width: 100px; height: auto;">
+                                    </div>
+                                    <button type="button" class="btn-clear btn-red-sm" style="display: none;">Очистить</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex">
+                            <div class="hidden">{{ cooking_step_form.empty_form.DELETE }}</div>
+                            <button type="button" class="self-center remove-cooking-step btn-red-sm">Удалить</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button id="add-cooking-step" class="btn-blue-sm"><i class="fa-solid fa-plus"></i> Добавить шаг</button>
+
+        <div class="load-file-ready-dish">
+            <label for="{{ form.image_ready_dish.id_for_label }}">{{ form.image_ready_dish.label }}</label>
+            <span class="icon-container">
+                <i class="ion ion-md-information-circle"></i>
+                <span class="tooltip-text">
+                    <p>Фото должно быть в горизонтальном формате</p>
+                    <i class="ion ion-md-images"></i>
+                </span>
+            </span>
+            <div class="form-fields-file">
+                <div class="hidden">{{ form.image_ready_dish }}</div>
+                <label for="{{ form.image_ready_dish.id_for_label }}" class="custom-file-label">Выберите фото</label>
+
+                {% if form.instance.image_ready_dish %}
+                <div class="uploaded-file">
+                   <a href="{{ form.instance.image_ready_dish.url }}" data-fancybox data-caption="Фото" style="text-decoration: none;">
+                       <div>
+                           <img src="{{ form.instance.image_ready_dish.url }}" alt="Фото" style="width: 200px; height: auto;">
+                       </div>
+                   </a>
+                </div>
+                {% endif %}
+
+                <div class="grid">
+                    <img id="image-preview-dish" src="#" alt="Предпросмотр изображения" class="img-thumbnail" style="display: none; width: 200px; height: auto;">
+                </div>
+                <button type="button" class="btn-clear btn-red-sm" style="display: none;">Очистить</button>
+            </div>
+        </div>
+
+        <div class="form-button">
+            <button class="btn-green" type="submit">Сохранить рецепт</button>
+        </div>
+
+    </form>
+
+    <!--    Подключение скрипов добавления ингредиентов-->
+    <script src="{% static 'recipes/js/add-ingredient.js' %}"></script>
+    <script src="{% static 'recipes/js/add-cooking-step.js' %}"></script>
+    <script src="{% static 'recipes/js/photo-preview.js' %}"></script>
+</div>
+
+
+
+{% endblock %}

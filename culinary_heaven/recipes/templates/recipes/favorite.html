@@ -1,0 +1,157 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load ratings %}
+{% load custom_filters %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+
+<div id="no-favorites-message" class="h-center">
+    {% if not object_list %}
+    <h1 class="h1">Нет избранных рецептов</h1>
+    {% else %}
+    <h1 class="h1">{{ title }}</h1>
+    {% endif %}
+</div>
+
+
+    {% for obj in object_list %}
+    <div class="recipes">
+
+        <a href="{% url 'recipes:detail_recipe' obj.slug %}">
+            <div class="recipe-image">
+                {% if obj.image_ready_dish %}
+                <img src="{{ obj.image_ready_dish.url }}" class="" alt="{{ obj.title }}">
+                {% endif %}
+            </div>
+        </a>
+
+        <div class="recipe-content">
+            <div class="author-date-container">
+                <p>Автор: {{ obj.author }}</p>
+                <p>{{ obj.date_of_creation|date:"d.m.Y" }}</p>
+            </div>
+
+            <a href="{% url 'recipes:detail_recipe' obj.slug %}">
+
+                <div class="title-cooking-time-container">
+                    <h3 class="recipe-title">{{ obj.title }}</h3>
+                    <div class="recipe-cooking-container">
+                        <span class="cooking-time-icon-container" title="Время приготовления">
+                          <i class="ion ion-md-stopwatch"></i>
+                          <span class="cooking-time-text">{{ obj.cooking_time|format_time_for_minutes }}</span>
+                        </span>
+                        <span class="portions-icon-container" title="Количество порций">
+                          <i class="ion ion-md-pie"></i>
+                          <span class="portions-text">{{ obj.portions }}</span>
+                        </span>
+                    </div>
+                </div>
+
+                {% if request.user_agent.is_mobile %}
+                  <p class="recipe-description">{{ obj.description|truncatechars:100 }}</p>
+                {% else %}
+                  <p class="recipe-description">{{ obj.description|truncatechars:230 }}</p>
+                {% endif %}
+
+            </a>
+
+            <div class="interaction-buttons-container">
+                <div class="rating">
+                    {% if request.user_agent.is_mobile %}
+                        {% ratings obj icon_height=20 icon_width=20 %}
+                    {% else %}
+                        {% ratings obj icon_height=25 icon_width=25 %}
+                    {% endif %}
+                </div>
+
+                <div class="right-icons">
+                    <div class="favorite-button-container">
+                        <button class="favorite-toggle" data-recipe-id="{{ obj.id }}" data-url="{% url 'recipes:add_to_favorites' %}" title="Удалить из избранного">
+                            <i class="ion ion-md-heart-dislike" style="color: #f61313;"></i>
+                        </button>
+                        <span class="favorite_count">{{ obj.favorite_set.count }}</span>
+                    </div>
+
+                    <div class="comments-link-container">
+                        <a class="comments-link" href="{% url 'recipes:detail_recipe' obj.slug %}#comments" title="Комментарии">
+                            <i class="ion ion-md-text"></i>
+                        </a>
+                        <span class="comments-count">{{ obj.comments.count }}</span>
+                    </div>
+
+                    <div class="basket-button-container">
+                        {% if obj.is_basket %}
+                            <button data-basket-action="remove" data-recipe-id="{{ obj.id }}" class="remove-from-basket-button" title="Удалить из корзины">
+                                <i class="ion ion-md-cart"></i>
+                            </button>
+                        {% else %}
+                            <button data-basket-action="add" data-recipe-id="{{ obj.id }}" class="add-to-basket-button" title="Добавить в корзину">
+                                <i class="ion ion-md-cart"></i>
+                            </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+<!-- Пагинация
+{% if page_obj.has_other_pages %}
+<nav class="pagination-container">
+  <ul class="pagination">
+    {% if page_obj.start_index %}
+    <li class="page-item">
+      <a class="page-link first-page" href="?page={{ page_obj.paginator.page_range.0 }}{% for key, values in request.GET.lists %}{% for value in values %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}{% endfor %}">Первая</a>
+    </li>
+    {% endif %}
+
+    {% if page_obj.has_previous %}
+    <li class="page-item">
+        <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% for key, values in request.GET.lists %}{% for value in values %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}{% endfor %}" aria-label="Предыдущая">
+            <span aria-hidden="true">&laquo;</span>
+        </a>
+    </li>
+    {% endif %}
+
+    {% for p in paginator.page_range %}
+        {% if p >= page_obj.number|add:-2 and p <= page_obj.number|add:2 %}
+            {% if page_obj.number == p %}
+                <li class="page-item selected-page"><span>{{ p }}</span></li>
+            {% else %}
+                <li class="page-item"><a class="page-link" href="?page={{ p }}{% for key, values in request.GET.lists %}{% for value in values %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}{% endfor %}">{{ p }}</a></li>
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+
+    {% if page_obj.has_next %}
+    <li class="page-item">
+        <a class="page-link" href="?page={{ page_obj.next_page_number }}{% for key, values in request.GET.lists %}{% for value in values %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}{% endfor %}" aria-label="Следующая">
+            <span aria-hidden="true">&raquo;</span>
+        </a>
+    </li>
+    {% endif %}
+
+    {% if page_obj.end_index %}
+    <li class="page-item">
+      <a class="page-link last-page" href="?page={{ page_obj.paginator.page_range|last }}{% for key, values in request.GET.lists %}{% for value in values %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}{% endfor %}">Последняя</a>
+    </li>
+    {% endif %}
+  </ul>
+</nav>
+{% endif %}
+-->
+
+<!--    Данные об аутентификации пользователя-->
+<script type="text/javascript">
+    var userIsAuthenticated = {{ request.user.is_authenticated|yesno:"true,false" }};
+</script>
+<!--    Подключение скрипов удаления из избранного-->
+<script src="{% static 'recipes/js/remove-favorite.js' %}"></script>
+<!--    Подключение скрипов добавления/удаления лайков-->
+<script src="{% static 'recipes/js/add-remove-like.js' %}"></script>
+<!--    Подключение скрипов добавления/удаления корзины-->
+<script src="{% static 'recipes/js/add-remove-basket.js' %}"></script>
+
+{% endblock %}

@@ -1,0 +1,172 @@
+[
+    {
+        "model": "recipes.category",
+        "pk": 1,
+        "fields": {
+            "name_category": "Завтрак",
+            "slug": "zavtraki"
+        }
+    },
+    {
+        "model": "recipes.category",
+        "pk": 2,
+        "fields": {
+            "name_category": "Обед",
+            "slug": "obed"
+        }
+    },
+    {
+        "model": "recipes.category",
+        "pk": 3,
+        "fields": {
+            "name_category": "Ужин",
+            "slug": "ujin"
+        }
+    },
+    {
+        "model": "recipes.tag",
+        "pk": 1,
+        "fields": {
+            "name_tag": "Легко",
+            "slug": "legko"
+        }
+    },
+    {
+        "model": "recipes.tag",
+        "pk": 2,
+        "fields": {
+            "name_tag": "Быстро",
+            "slug": "bystro"
+        }
+    },
+    {
+        "model": "recipes.tag",
+        "pk": 3,
+        "fields": {
+            "name_tag": "Минимум ингредиентов",
+            "slug": "minimum_ingredientov"
+        }
+    },
+    {
+        "model": "recipes.cookingmethod",
+        "pk": 1,
+        "fields": {
+            "name_cooking_method": "Жарка",
+            "slug": "jarka"
+        }
+    },
+    {
+        "model": "recipes.cookingmethod",
+        "pk": 2,
+        "fields": {
+            "name_cooking_method": "Варка",
+            "slug": "varka"
+        }
+    },
+    {
+        "model": "recipes.cookingmethod",
+        "pk": 3,
+        "fields": {
+            "name_cooking_method": "На углях",
+            "slug": "na_uglyah"
+        }
+    },
+    {
+        "model": "recipes.unit",
+        "pk": 1,
+        "fields": {
+            "name_unit": "гр"
+        }
+    },
+    {
+        "model": "recipes.unit",
+        "pk": 2,
+        "fields": {
+            "name_unit": "кг"
+        }
+    },
+    {
+        "model": "recipes.unit",
+        "pk": 3,
+        "fields": {
+            "name_unit": "мл"
+        }
+    },
+    {
+        "model": "recipes.unit",
+        "pk": 4,
+        "fields": {
+            "name_unit": "шт"
+        }
+    },
+    {
+        "model": "recipes.recipe",
+        "pk": 1,
+        "fields": {
+            "status_moderation": 1,
+            "is_published": true,
+            "title": "Яичница",
+            "category": 1,
+            "description": "Яичница — это не только вкусное, но и питательное блюдо, богатое белками и витаминами. Она идеально подходит для быстрого и сытного завтрака, а разнообразие способов её приготовления делает её любимым рецептом на кухне многих людей.",
+            "cooking_time": 10,
+            "portions": 1,
+            "author": 1,
+            "slug": "yaichnitca"
+        }
+    },
+    {
+        "model": "recipes.ingredient",
+        "pk": 1,
+        "fields": {
+            "recipe_ingredient": 1,
+            "name_ingredient": "Яйцо",
+            "amount": "2",
+            "unit": 4
+        }
+    },
+    {
+        "model": "recipes.ingredient",
+        "pk": 2,
+        "fields": {
+            "recipe_ingredient": 1,
+            "name_ingredient": "Соль",
+            "amount": "1",
+            "unit": 1
+        }
+    },
+    {
+        "model": "recipes.ingredient",
+        "pk": 3,
+        "fields": {
+            "recipe_ingredient": 1,
+            "name_ingredient": "Масло",
+            "amount": "20",
+            "unit": 3
+        }
+    },
+    {
+        "model": "recipes.cookingstep",
+        "pk": 1,
+        "fields": {
+            "recipe_cooking_step": 1,
+            "description_step": "Налить масло в сковороду"
+        }
+    },
+    {
+        "model": "recipes.cookingstep",
+        "pk": 2,
+        "fields": {
+            "recipe_cooking_step": 1,
+            "description_step": "Разбить яйца в разогретую сковороду"
+        }
+    },
+    {
+        "model": "recipes.cookingstep",
+        "pk": 3,
+        "fields": {
+            "recipe_cooking_step": 1,
+            "description_step": "Посолить и накрыть крышкой"
+        }
+    }
+
+]

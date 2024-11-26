@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Редактирование профиля{% endblock %}
+
+{% block content %}
+
+<div class="login-container">
+    <div class="login">
+        <div class="h-center">
+            <h2 class="h1">Редактирование профиля</h2>
+        </div>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ next }}"/>
+
+            {% if form.non_field_errors %}
+            <div class="form-fields-errors">
+                {{ form.non_field_errors }}
+            </div>
+            {% endif %}
+
+            <div class="profile-avatar">
+                <label for="{{ form.image_profile.id_for_label }}">{{ form.image_profile.label }}</label>
+                <div class="form-fields-file">
+                    <div class="hidden">{{ form.image_profile }}</div>
+                    <label for="{{ form.image_profile.id_for_label }}" class="custom-file-label">Выберите фото</label>
+
+                    {% if form.instance.image_profile %}
+                        <div class="uploaded-file">
+                           <a href="{{ form.instance.image_profile.url }}" data-fancybox data-caption="Фото" style="text-decoration: none;">
+                               <div>
+                                   <img src="{{ form.instance.image_profile.url }}" alt="Фото" style="width: 200px; height: auto;">
+                               </div>
+                           </a>
+                        </div>
+                    {% endif %}
+
+                    <div class="grid">
+                        <img id="profile-avatar" src="#" alt="Предпросмотр изображения" class="img-thumbnail" style="display: none; width: 200px; height: auto;">
+                    </div>
+                    <button type="button" class="btn-clear btn-red-sm" style="display: none;">Очистить</button>
+                </div>
+            </div>
+
+            <label for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
+            <p>{{ form.username }}</p>
+            <div>{{ form.username.errors }}</div>
+
+            <label for="{{ form.first_name.id_for_label }}">{{ form.first_name.label }}</label>
+            <p>{{ form.first_name }}</p>
+            <div>{{ form.first_name.errors }}</div>
+
+            <label for="{{ form.last_name.id_for_label }}">{{ form.last_name.label }}</label>
+            <p>{{ form.last_name }}</p>
+            <div>{{ form.last_name.errors }}</div>
+
+            <label for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
+            <p>{{ form.email }}</p>
+            <div>{{ form.email.errors }}</div>
+
+            <label for="{{ form.phone_number.id_for_label }}">{{ form.phone_number.label }}</label>
+            <p>{{ form.phone_number }}</p>
+            <div>{{ form.phone_number.errors }}</div>
+
+            <div class="login-buttons">
+                <button class="btn-green" type="submit">Сохранить</button>
+                <p><a href="{% url 'accounts:password_change' %}">Изменить пароль</a></p>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="{% static 'accounts/js/profile-avatar.js' %}"></script>
+
+{% endblock %}
+

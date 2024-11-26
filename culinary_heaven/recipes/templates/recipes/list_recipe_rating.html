@@ -1,0 +1,9 @@
+{% if week_rating %}
+    <li class="extra-content-title">Лучшие за неделю:</li>
+    {% for r in week_rating %}
+        <li>
+            {{ forloop.counter }}
+            <a href="{% url 'recipes:detail_recipe' r.slug %}">{{ r.title }}</a>
+        </li>
+    {% endfor %}
+{% endif %}

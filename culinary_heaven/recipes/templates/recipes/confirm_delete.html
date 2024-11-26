@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+
+<div class="confirm-delete">
+    <div class="h-center">
+        <h1 class="h1">{{ title }}</h1>
+    </div>
+    <form action="" method="post" class="confirm-delete-form">
+        {% csrf_token %}
+        <p class="">Вы действительно хотите удалить рецепт "{{ recipe.title }}"?</p>
+        <button type="submit" class="btn-red-sm">Удалить</button>
+    </form>
+</div>
+
+{% endblock %}

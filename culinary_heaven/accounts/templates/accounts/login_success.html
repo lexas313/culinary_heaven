@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="login-container">
+  <div class="login-success">
+    <div class="h-center">
+      <h1 class="h1">Авторизация прошла успешно</h1>
+    </div>
+    <div class="login-buttons">
+      <p>Добро пожаловать,
+      <a href="{% url 'accounts:profile' user.username %}">{{ user.username }}</a>!
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %}

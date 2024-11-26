@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}Регистрация{% endblock %}
+
+{% block content %}
+
+<div class="login-container">
+    <div class="login">
+        <div class="h-center">
+            <h2 class="h1">Регистрация</h2>
+        </div>
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ next }}"/>
+            {% if form.non_field_errors %}
+            <div class="form-fields-errors">
+                {{ form.non_field_errors }}
+            </div>
+            {% endif %}
+            {% for f in form %}
+                {% if f.name != 'privacy_policy' and f.name != 'captcha' %}
+                <p><label for="{{ f.id_for_label }}">{{ f.label }}</label>{{ f }}</p>
+                <div class="field-errors">{{ f.errors }}</div>
+                {% endif %}
+            {% endfor %}
+
+
+            <p><label for="{{ form.captcha.id_for_label }}">{{ form.captcha.label }}</label></p>
+            {{ form.captcha }}
+            <button type="button" class="js-captcha-refresh" style="font-size:15px; color:#0b752e;" data-url="{% url 'accounts:captcha-refresh' %}"><i class="ion ion-md-sync" style="font-size: 20px;"></i> Обновить капчу</button>
+            <div class="field-errors">{{ form.captcha.errors }}</div>
+
+            <div class="privacy-policy-form">
+                <p>{{ form.privacy_policy }}</p>
+                <label>
+                    <span>Подтверждаю свое согласие с <a href="{% url 'accounts:privacy_policy' %}">политикой конфиденциальности</a></span>
+                </label>
+                <div>{{ form.privacy_policy.errors }}</div>
+            </div>
+
+            <div class="login-buttons">
+                <button class="btn-green" type="submit">Зарегистрироваться</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    $('.js-captcha-refresh').click(function(){
+        var $captchaImage = $(this).siblings('img.captcha');
+        var $captchaHiddenInput = $('input[name="captcha_0"]');
+        $.getJSON($(this).data('url'), {}, function(json) {
+            // Обновляем изображение капчи
+            $captchaImage.attr('src', json.image_url);
+            // Обновляем скрытое поле с идентификатором капчи
+            $captchaHiddenInput.val(json.key);
+        });
+        return false;
+    });
+});
+</script>
+
+{% endblock %}

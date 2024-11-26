@@ -1,0 +1,14 @@
+{% if tags %}
+    <p class="sidebar-title">Теги:</p>
+    <div class="flex-container">
+    {% for tag in tags %}
+        {% if tag.slug in selected_tags %}
+            <!-- Убираем тег из фильтра -->
+            <li><a href="{% url 'recipes:tag' %}?{% for selected_tag in selected_tags %}{% if selected_tag != tag.slug %}&tags_sidebar={{ selected_tag }}{% endif %}{% endfor %}" class="selected">{{ tag.name_tag }} ({{ tag.total }})</a></li>
+        {% else %}
+            <!-- Добавляем тег в фильтр -->
+            <li><a href="{% url 'recipes:tag' %}?{% for selected_tag in selected_tags %}&tags_sidebar={{ selected_tag }}{% endfor %}&tags_sidebar={{ tag.slug }}">{{ tag.name_tag }} ({{ tag.total }})</a></li>
+        {% endif %}
+    {% endfor %}
+    </div>
+{% endif %}

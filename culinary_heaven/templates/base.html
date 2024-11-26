@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    {% load static %}
+    {% load recipes_tags %}
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Philosopher:ital,wght@0,400;0,700;1,400;1,700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{% static 'recipes/css/reset.min.css' %}">
+    <link rel="stylesheet" href="{% static 'recipes/css/style.css' %}">
+
+    <!-- Favicon -->
+    {% include 'favicon.html' %}
+
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/4.6.3/css/ionicons.min.css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+
+    <script src="https://kit.fontawesome.com/4d4e0e981d.js" crossorigin="anonymous"></script>
+
+    <!-- django-star-ratings -->
+    <link rel="stylesheet" href="{% static 'star-ratings/css/star-ratings.css' %}">
+    <script type="text/javascript" src="{% static 'star-ratings/js/dist/star-ratings.min.js' %}"></script>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+    <!-- Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <!--    Подключение csrf-токена-->
+    <script src="{% static 'recipes/js/cookies.js' %}"></script>
+
+
+    <title>{% block title %}{% endblock %}</title>
+</head>
+<body>
+<!-- Меню -->
+{% include 'menu.html' %}
+
+<div class="main-container">
+    <div class="sidebar">
+        <div>
+            <ul>
+                <li class="sidebar-title">Категории:</li>
+                {% if cat_selected == 0 %}
+                <li class="active">Все рецепты</li>
+                {% else %}
+                <li><a href="{% url 'recipes:all_recipes' %}">Все рецепты</a></li>
+                {% endif %}
+                {% show_categories cat_selected %}
+            </ul>
+        </div>
+        <div>
+            {% show_tags %}
+        </div>
+    </div>
+
+    <div class="main-content">
+        {% block breadcrumbs %}{% endblock %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <div class="extra-content">
+        <ul>
+            {% show_recipe_rating %}
+        </ul>
+    </div>
+
+
+</div>
+
+</body>
+</html>

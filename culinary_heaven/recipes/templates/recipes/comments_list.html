@@ -1,0 +1,111 @@
+{% load mptt_tags static %}
+<div class="card-body">
+    <h2 id="comment_count">
+        Комментарии ({{ recipe.comments.count }}):
+    </h2>
+    <div class="nested-comments">
+      {% recursetree recipe.comments.all %}
+      <ul id="comment-thread-{{ node.pk }}" class="list-none">
+        <li class="card">
+          <div class="comment-container">
+
+            {% if node.author.image_profile %}
+                <img src="{{ node.author.image_profile.url }}" class="comment-image-profile" alt="{{ node.author }}" />
+            {% else %}
+                <img src="{{ node.get_avatar }}" class="comment-image-profile" alt="{{ node.author }}" />
+            {% endif %}
+
+          <div class="card-body">
+            <div class="comment-author-time">
+                <h6 class="card-title">
+                  {% if node.author %}
+                  <b>
+                  <a class="comment-author" href="{{ node.author.get_absolute_url }}">
+                    {{ node.author }}
+                  </a>
+                  </b>
+                  {% else %}
+                  <b>
+                  <a class="comment-author" href="mailto:{{ node.email}}">
+                    {{ node.name }}
+                  </a>
+                  </b>
+                  {% endif %}
+                </h6>
+                <time class="comment-time-create">{{ node.time_create|date:"d F Y"|lower }}</time>
+            </div>
+
+            <p class="card-text">
+              {{ node.content }}
+            </p>
+
+            <div class="comment-btn">
+              {% if node.author %}
+              <a class="comment-btn-answer" href="#commentForm" data-comment-id="{{ node.pk }}" data-comment-username="{{ node.author }}">Ответить</a>
+              {% else %}
+              <a class="comment-btn-answer" href="#commentForm" data-comment-id="{{ node.pk }}" data-comment-username="{{ node.name }}">Ответить</a>
+              {% endif %}
+              {% if request.user == node.author or request.user == recipe.author %}
+              <a class="delete-comment-button"
+                 href="#"
+                 data-comment-id="{{ node.pk }}"
+                 data-comment-username="{{ node.author }}">Удалить</a>
+              {% endif %}
+            </div>
+          </div>
+          </div>
+          <!-- Добавляем классы отступа для вложенных комментариев -->
+          {% if not node.is_leaf_node %}
+          <ul class="nested-comm">
+            {{ children }}
+          </ul>
+          {% endif %}
+        </li>
+      </ul>
+      {% endrecursetree %}
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <h6 class="card-title">
+                Форма добавления комментария
+            </h6>
+            <form method="post" action="{% url 'recipes:comment_create_view' recipe.pk %}" id="commentForm" name="commentForm" data-recipe-id="{{ recipe.pk }}">
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                    {{ form.non_field_errors }}
+                {% endif %}
+
+                {{ form.content }}
+                {{ form.parent }}
+
+<!--                {% if not request.user.is_authenticated %}-->
+<!--                <div class="form-field-comment">-->
+<!--                    <label for="{{ form.name.id_for_label }}">{{ form.name.label }}:</label>-->
+<!--                    {{ form.name }}-->
+<!--                </div>-->
+<!--                <div class="form-field-comment">-->
+<!--                    <label for="{{ form.email.id_for_label }}">{{ form.email.label }}:</label>-->
+<!--                    {{ form.email }}-->
+<!--                </div>-->
+<!--                {% endif %}-->
+
+                {% if request.user.is_authenticated %}
+                <div>
+                    <button id="commentSubmit" class="btn-green" type="submit">Добавить комментарий</button>
+                </div>
+                {% else %}
+                <div style="display: flex;">
+                    <a class="btn-green" href="{% url 'accounts:login' %}?next={{ request.path }}"><span>Добавить комментарий</span></a>
+                </div>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+</div>
+{% block script %}
+
+<script src="{% static 'recipes/js/comments.js' %}"></script>
+
+{% endblock %}

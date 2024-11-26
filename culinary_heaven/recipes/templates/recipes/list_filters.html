@@ -1,0 +1,87 @@
+<div class="popup-content">
+    <form method="get" class="form-container">
+        <div class="form-group-search">
+            <label for="{{ filter.form.search.id_for_label }}">{{ filter.form.search.label }}</label>
+            {{ filter.form.search }}
+            <div>{{ filter.form.search.errors }}</div>
+        </div>
+
+        <div class="collapsible">
+            <button class="collapsible-button" id="filter-toggle" type="button">Показать фильтр</button>
+            <div class="collapsible-content">
+                <div class="inner-content">
+                    <div class="form-group">
+                        <label for="{{ filter.form.category.id_for_label }}">{{ filter.form.category.label }}</label>
+                        {{ filter.form.category }}
+                        <div>{{ filter.form.category.errors }}</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ filter.form.tags.id_for_label }}">{{ filter.form.tags.label }}</label>
+                        {{ filter.form.tags }}
+                        <div>{{ filter.form.tags.errors }}</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ filter.form.cooking_method.id_for_label }}">{{ filter.form.cooking_method.label }}</label>
+                        {{ filter.form.cooking_method }}
+                        <div>{{ filter.form.cooking_method.errors }}</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ filter.form.contains_ingredients.id_for_label }}">{{ filter.form.contains_ingredients.label }}</label>
+                        {{ filter.form.contains_ingredients }}
+                        <div>{{ filter.form.contains_ingredients.errors }}</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ filter.form.exclude_ingredients.id_for_label }}">{{ filter.form.exclude_ingredients.label }}</label>
+                        {{ filter.form.exclude_ingredients }}
+                        <div>{{ filter.form.exclude_ingredients.errors }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="submit-button btn-green-sm">Найти рецепт</button>
+    </form>
+    <span class="close">&times;</span>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    var coll = document.querySelector('#filter-toggle');
+    var content = coll.nextElementSibling;
+    var maxAllowedHeight = 500;
+
+    var isFilterOpen = localStorage.getItem('filterOpen') === 'true';
+
+    if (isFilterOpen) {
+        coll.parentElement.classList.add('active'); // Добавляем класс к родителю
+        var contentHeight = content.scrollHeight;
+        content.style.maxHeight = contentHeight > maxAllowedHeight ? maxAllowedHeight + "px" : contentHeight + "px";
+        coll.textContent = "Скрыть фильтр";
+    } else {
+        coll.textContent = "Показать фильтр";
+    }
+
+    coll.addEventListener('click', function(event) {
+        event.preventDefault();
+        this.parentElement.classList.toggle('active'); // Переключаем класс у родителя
+        console.log('Active class added to parent:', this.parentElement.classList.contains('active'));
+
+        if (this.parentElement.classList.contains('active')) {
+            var contentHeight = content.scrollHeight;
+            console.log('Content height:', contentHeight);
+            content.style.maxHeight = contentHeight > maxAllowedHeight ? maxAllowedHeight + "px" : contentHeight + "px";
+            this.textContent = "Скрыть фильтр";
+            localStorage.setItem('filterOpen', 'true');
+        } else {
+            content.style.maxHeight = null;
+            this.textContent = "Показать фильтр";
+            localStorage.setItem('filterOpen', 'false');
+        }
+    });
+});
+</script>
+

@@ -1,0 +1,75 @@
+<!-- menu.html -->
+{% load static %}
+{% load recipes_tags %}
+
+<!-- Section: Header -->
+<header class="header">
+    <div class="container">
+        <div class="wrapper">
+            <div class="header-item-left">
+                <h1><a href="{% url 'home' %}" class="brand">Кулинарный рай</a></h1>
+            </div>
+            <!-- Section: Navbar Menu -->
+            <div class="header-item-center">
+                <div class="overlay"></div>
+                <nav class="menu">
+                    <div class="menu-mobile-header">
+                        <button type="button" class="menu-mobile-arrow"><i class="ion ion-ios-arrow-back"></i></button>
+                        <div class="menu-mobile-title">
+                            <h1><a href="{% url 'home' %}" class="brand">Кулинарный рай</a></h1>
+                        </div>
+                        <button type="button" class="menu-mobile-close"><i class="ion ion-ios-close"></i></button>
+                    </div>
+
+                    <ul class="menu-section">
+                        <li>
+                          <a class="{% if request.resolver_match.url_name == 'all_recipes' %}active{% endif %}" href="{% url 'recipes:all_recipes' %}">Все рецепты</a>
+                        </li>
+                        <li>
+                          <a class="{% if request.resolver_match.url_name == 'add_recipe' %}active{% endif %}" href="{% url 'recipes:add_recipe' %}">Добавить рецепт</a>
+                        </li>
+                        <li class="menu-item-has-children">
+                            <a href="#">Категории <i class="ion ion-ios-arrow-down"></i></a>
+                            <div class="menu-subs menu-column-1">
+                                <ul>
+                                    {% show_categories cat_selected %}
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+
+            <div class="header-item-right">
+                {% if filter %}
+                    <a href="#" class="menu-icon" id="searchButton"><i class="ion ion-md-search"></i></a>
+                {% endif %}
+                <a href="{% url 'recipes:favorite' %}" class="menu-icon {% if request.resolver_match.url_name == 'favorite' %}active{% endif %}"><i class="ion ion-md-heart"></i></a>
+                <a href="{% url 'recipes:basket' %}" class="menu-icon {% if request.resolver_match.url_name == 'basket' %}active{% endif %}"><i class="ion ion-md-cart"></i></a>
+                {% if request.user.is_authenticated %}
+                <a href="{% url 'accounts:profile' user.username %}" class="menu-icon {% if request.resolver_match.url_name == 'profile' %}active{% endif %}"><i class="ion ion-ios-contact"></i></a>
+                {% else %}
+                <a href="{% url 'accounts:login' %}" class="menu-icon {% if request.resolver_match.url_name == 'login' %}active{% endif %}"><i class="ion ion-ios-contact"></i></a>
+                {% endif %}
+            </div>
+
+            {% if filter %}
+                <div id="searchPopup" class="popup">
+                    {% show_filters %}
+                </div>
+            {% endif %}
+
+            <div id="overlay"></div> <!-- Затемняющий фон -->
+
+            <button type="button" class="menu-mobile-trigger">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </div>
+</header>
+
+
+<script src="{% static 'recipes/js/script.js' %}"></script>

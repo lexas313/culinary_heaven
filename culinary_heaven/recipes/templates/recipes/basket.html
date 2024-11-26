@@ -1,0 +1,164 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load ratings %}
+{% load custom_filters %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+
+{% if object_list %}
+<div class="h-center">
+    <h1 class="h1">Корзина</h1>
+</div>
+
+<div class="tabs">
+    <button class="tablinks" onclick="openTab(event, 'recipes-tab')" id="defaultOpen">Рецепты</button>
+    <button class="tablinks" onclick="openTab(event, 'ingredients-tab')">Ингредиенты</button>
+</div>
+
+<!-- Контейнер для рецептов -->
+<div id="recipes-tab" class="tabcontent">
+    <div style="display: flex; justify-content: flex-end;">
+        <button class="delete-all-basket-btn" onclick="deleteBasket()">Очистить корзину</button>
+    </div>
+
+    <div id="basket-container">
+        <div class="h-center">
+            <h1 class="h2">Рецепты</h1>
+        </div>
+
+        {% for basket in object_list %}
+        <div id="basket-{{ basket.id }}" class="recipes">
+
+            <a href="{% url 'recipes:detail_recipe' basket.recipe.slug %}">
+                <div class="recipe-image">
+                    {% if basket.recipe.image_ready_dish %}
+                    <img src="{{ basket.recipe.image_ready_dish.url }}" class="" alt="{{ basket.recipe.title }}">
+                    {% endif %}
+                </div>
+            </a>
+
+            <div class="recipe-content">
+                <div class="author-date-container">
+                    <p>Автор: {{ basket.recipe.author }}</p>
+                    <p>{{ basket.recipe.date_of_creation|date:"d.m.Y" }}</p>
+                </div>
+
+                <a href="{% url 'recipes:detail_recipe' basket.recipe.slug %}">
+
+                    <div class="title-cooking-time-container">
+                        <h3 class="recipe-title">{{ basket.recipe.title }}</h3>
+                        <div class="recipe-cooking-container">
+                            <span class="cooking-time-icon-container" title="Время приготовления">
+                              <i class="ion ion-md-stopwatch"></i>
+                              <span class="cooking-time-text">{{ basket.recipe.cooking_time|format_time_for_minutes }}</span>
+                            </span>
+                            <span class="portions-icon-container" title="Количество порций">
+                              <i class="ion ion-md-pie"></i>
+                              <span class="portions-text">{{ basket.recipe.portions }}</span>
+                            </span>
+                        </div>
+                    </div>
+
+                    {% if request.user_agent.is_mobile %}
+                      <p class="recipe-description">{{ basket.recipe.description|truncatechars:100 }}</p>
+                    {% else %}
+                      <p class="recipe-description">{{ basket.recipe.description|truncatechars:230 }}</p>
+                    {% endif %}
+                </a>
+
+                <!-- Кнопки для изменения количества -->
+                <div class="quantity-buttons">
+                    <button class="" onclick="updateQuantity({{ basket.id }}, 'decrease_quantity/')"><i class="fa-solid fa-minus fa-lg" style="color: #B197FC;"></i></button>
+                    <span id="quantity-{{ basket.id }}" class="">{{ basket.quantity }}</span>
+                    <button class="" onclick="updateQuantity({{ basket.id }}, 'increase_quantity/')"><i class="fa-solid fa-plus fa-lg" style="color: #B197FC;"></i></button>
+                    <button class="" onclick="deleteBasketItem({{ basket.id }})"><i class="fa-solid fa-trash fa-lg" style="color: #da1b1b;"></i></button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+
+<!-- Контейнер для ингредиентов -->
+<div id="ingredients-tab" class="tabcontent">
+    <div style="display: flex; justify-content: flex-end;">
+        <button class="update-ingredients-btn" onclick="updateBasket()">Обновить ингредиенты</button>
+    </div>
+    <div id="ingredient-container">
+        {% if object_list %}
+            <div class="h-center">
+                <h1 class="h2">Ингредиенты</h1>
+            </div>
+        {% endif %}
+        {% for basket in object_list %}
+            {% if basket.basket_ingredients.all %}
+                <div id="basket-{{ basket.id }}-ingredients" class="basket-ingredients">
+                    <h3><b>{{ basket.recipe.title }}</b></h3>
+                    <ul>
+                        {% for ingredient in basket.basket_ingredients.all %}
+                            <div id="ingredient-{{ ingredient.id }}" class="ingredient-line">
+                                <span class="ingredient-name">{{ ingredient.ingredient.name_ingredient }}</span>
+                                <span class="ingredient-dots"></span>
+                                {{ ingredient.quantity }}
+                                <span class="ingredient-amount">{{ ingredient.unit }}</span>
+                                <button class="mx-2" onclick="deleteBasketIngredient({{ ingredient.id }}, {{ basket.id }})"><i class="ion ion-md-close" style="color: #da1b1b; font-size: 30px; transform: translateY(6px);"></i></button>
+                            </div>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
+
+{% else %}
+<div class="h-center">
+    <h1 class="h1">Корзина пуста</h1>
+</div>
+{% endif %}
+
+
+
+
+<script>
+function openTab(evt, tabName) {
+    var i, tabcontent, tablinks;
+
+    // Скрываем все элементы с классом "tabcontent"
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
+
+    // Убираем класс "active" со всех кнопок
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+
+    // Показываем текущую вкладку и добавляем "active" на кнопку, которая её открыла
+    document.getElementById(tabName).style.display = "block";
+    evt.currentTarget.className += " active";
+
+    // Сохраняем активную вкладку в localStorage
+    localStorage.setItem('activeTab', tabName);
+}
+
+// Автоматически открываем вкладку при загрузке страницы
+document.addEventListener("DOMContentLoaded", function() {
+    var activeTab = localStorage.getItem('activeTab');
+    if (activeTab) {
+        document.getElementById(activeTab).style.display = "block";
+        document.querySelector(`.tablinks[onclick="openTab(event, '${activeTab}')"]`).className += " active";
+    } else {
+        document.getElementById("defaultOpen").click();
+    }
+});
+</script>
+
+<!--    Подключение скрипов для работы с корзиной-->
+<script src="{% static 'recipes/js/basket.js' %}"></script>
+
+{% endblock %}
